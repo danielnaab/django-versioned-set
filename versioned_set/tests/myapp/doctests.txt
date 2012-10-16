@@ -1,0 +1,31 @@
+>>> from versioned_set.models import VersionedSet
+>>> from myapp.models import VersionedSetTestData
+
+>>> versioned_set = VersionedSet.objects.create()
+>>> set_data = VersionedSetTestData.objects.create(data=10, versioned_set=versioned_set)
+>>> set_data = VersionedSetTestData.objects.create(data=11, versioned_set=versioned_set)
+>>> set_data = VersionedSetTestData.objects.create(data=12, versioned_set=versioned_set)
+>>> versioned_set.get_items()
+set([10, 11, 12])
+
+>>> versioned_set2 = VersionedSet()
+>>> versioned_set2.insert_at(versioned_set, save=True)
+>>> set_data = VersionedSetTestData.objects.create(data=13, versioned_set=versioned_set2)
+>>> set_data = VersionedSetTestData.objects.create(data=14, versioned_set=versioned_set2)
+>>> versioned_set2.get_items()
+set([10, 11, 12, 13, 14])
+
+>>> versioned_set3 = VersionedSet()
+>>> versioned_set3.insert_at(versioned_set2, save=True)
+>>> set_data = VersionedSetTestData.objects.create(data=15, versioned_set=versioned_set3)
+>>> set_data = VersionedSetTestData.objects.create(data=11, clear=True, versioned_set=versioned_set3)
+>>> versioned_set3.get_items()
+set([10, 12, 13, 14, 15])
+
+>>> versioned_set4 = VersionedSet()
+>>> versioned_set4.insert_at(versioned_set3, save=True)
+>>> set_data = VersionedSetTestData.objects.create(data=16, versioned_set=versioned_set4)
+>>> set_data = VersionedSetTestData.objects.create(data=12, clear=True, versioned_set=versioned_set4)
+>>> set_data = VersionedSetTestData.objects.create(data=17, versioned_set=versioned_set4)
+>>> versioned_set4.get_items()
+set([10, 13, 14, 15, 16, 17])
